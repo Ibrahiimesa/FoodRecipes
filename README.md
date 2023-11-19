@@ -8,8 +8,8 @@ Library
 
 •	Retrofit
 
-![Home](https://github.com/Ibrahiimesa/FoodRecipes/assets/85695510/00bc4c4d-245b-455a-b11a-1aac0aa287eb)
-![Detail](https://github.com/Ibrahiimesa/FoodRecipes/assets/85695510/33224349-5875-478b-a1dd-10a5ad9ef39e)
+![Home](https://github.com/Ibrahiimesa/FoodRecipes/assets/85695510/8750c14f-4abd-4ca7-a68f-434ac7669fdf)
+![Detail](https://github.com/Ibrahiimesa/FoodRecipes/assets/85695510/aa8bcbae-9efd-4395-8eb9-f95074b73e55)
 
-![List](https://github.com/Ibrahiimesa/FoodRecipes/assets/85695510/4b1704e6-43d1-4683-b9af-6f882f7d319a)
-![Favorites](https://github.com/Ibrahiimesa/FoodRecipes/assets/85695510/f45617f4-aa60-4fdc-bf9a-2794fb4fd490)
+![Favorites](https://github.com/Ibrahiimesa/FoodRecipes/assets/85695510/44bf4362-1e1d-4480-9b1e-fff544d7e01d)
+![List](https://github.com/Ibrahiimesa/FoodRecipes/assets/85695510/0685aca1-99f8-4f07-8ff7-db7c77b03e6c)
