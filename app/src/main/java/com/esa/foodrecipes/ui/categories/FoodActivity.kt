@@ -4,8 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.esa.foodrecipes.adapter.ListFoodAdapter
 import com.esa.foodrecipes.data.Resource
@@ -20,10 +23,27 @@ class FoodActivity : AppCompatActivity() {
     private val vm: FoodViewModel by viewModels()
     private lateinit var foodAdapter: ListFoodAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityFoodBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.lyFood) { view, insets ->
+            // Get system bar insets (status bar, navigation bar)
+            val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Apply padding to the view based on the insets
+            view.setPadding(
+                systemBarInsets.left,
+                systemBarInsets.top,
+                systemBarInsets.right,
+                systemBarInsets.bottom
+            )
+
+            // Return the insets without consuming them
+            insets
+        }
 
         val categoryName = intent.getStringExtra("categoryName")
         val searchQuery = intent.getStringExtra("searchQuery")

@@ -5,9 +5,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.esa.foodrecipes.R
 import com.esa.foodrecipes.data.response.DetailItem
@@ -24,10 +27,22 @@ class DetailActivity : AppCompatActivity() {
     private val vm: DetailViewModel by viewModels()
     private val vmFavorite: FavoriteViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                view.paddingTop,
+                view.paddingRight,
+                systemBarsInsets.bottom  // This adds padding at the bottom based on the navigation bar height
+            )
+            insets
+        }
 
         val foodId = intent.getStringExtra("foodId")
 
@@ -50,6 +65,26 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
+    private fun getIngredientList(data: DetailItem): List<String> {
+        val ingredients = mutableListOf<String>()
+
+        for (i in 1..20) {
+            val ingredientField = data::class.java.getDeclaredField("strIngredient$i")
+            val measureField = data::class.java.getDeclaredField("strMeasure$i")
+
+            measureField.isAccessible = true
+            ingredientField.isAccessible = true
+
+            val ingredient = ingredientField.get(data) as? String
+            val measure = measureField.get(data) as? String
+            if (!ingredient.isNullOrEmpty()) {
+                val measureText = if (!measure.isNullOrEmpty()) measure else ""
+                ingredients.add("$ingredient - $measureText")
+            }
+        }
+        return ingredients
+    }
+
     private fun updateUI(data: DetailItem) {
         Glide.with(this)
             .load(data.strMealThumb)
@@ -60,6 +95,13 @@ class DetailActivity : AppCompatActivity() {
             tvTitleDetail.text = data.strMeal
             tvCategory.text = data.strCategory
             tvInstructionsDetail.text = data.strInstructions
+
+            val ingredientList = getIngredientList(data)
+            val ingredientsText = ingredientList.mapIndexed { index, ingredient -> "${index + 1}. $ingredient" }
+                .joinToString(separator = "\n")
+
+            tvIngredientDetail.text = ingredientsText
+
             btnYoutube.setOnClickListener {
                 openYoutubeVideo(data.strYoutube)
             }
@@ -70,11 +112,14 @@ class DetailActivity : AppCompatActivity() {
                     imageUrl = data.strMealThumb,
                 )
             }
-
-            var favoriteState = vmFavorite.favorites.value?.any { it.id == data.idMeal } == true
-            setFavorite(favoriteState)
+            vmFavorite.favorites.observe(this@DetailActivity) { favoriteList ->
+                // Check if the current item is in the favorites list
+                val favoriteState = favoriteList?.any { it.id == data.idMeal } == true
+                setFavorite(favoriteState)  // Update the UI accordingly
+            }
 
             binding.imgFavorite.setOnClickListener {
+                var favoriteState = vmFavorite.favorites.value?.any { it.id == data.idMeal } == true
                 favoriteState = !favoriteState
                 setFavorite(favoriteState)
 
@@ -87,8 +132,7 @@ class DetailActivity : AppCompatActivity() {
                     if (favoriteItem != null) {
                         vmFavorite.deleteFavorite(favoriteItem)
                     }
-                    Snackbar.make(binding.root, "Removed from favorites", Snackbar.LENGTH_SHORT)
-                        .show()
+                    Snackbar.make(binding.root, "Removed from favorites", Snackbar.LENGTH_SHORT).show()
                 }
             }
         }
@@ -113,5 +157,6 @@ class DetailActivity : AppCompatActivity() {
             }
         }
     }
+
 
 }

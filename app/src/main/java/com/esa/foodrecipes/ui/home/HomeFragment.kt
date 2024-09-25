@@ -141,7 +141,7 @@ class HomeFragment : Fragment() {
         categoriesAdapter = CategoriesAdapter(emptyList())
 
         binding.rvCategories.apply {
-            layoutManager = GridLayoutManager(context, 2, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = GridLayoutManager(context, 3, LinearLayoutManager.HORIZONTAL, false)
 
             setHasFixedSize(true)
             adapter = categoriesAdapter
